@@ -33,7 +33,7 @@ class Client extends GuzzleClient {
      * @return mixed|\Psr\Http\Message\ResponseInterface
      * @throws \GuzzleHttp\Exception\GuzzleException
      */
-    public function request(string $method, string $uri, array $options = []) {
+    public function request($method, $uri, array $options = []) {
         return json_decode(
             (string) parent::request($method, $uri, $options)->getBody()
         );
