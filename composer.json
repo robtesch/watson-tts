@@ -1,35 +1,37 @@
 {
-    "name": "robtesch/watson_tts",
-    "description": "A Laravel package for making use of IBM's Watson Text-To-Speech Service",
-    "keywords": [
-        "watson", "ibm", "php", "tts", "text-to-speech"
-    ],
-    "homepage": "https://github.com/robtesch/watson-tts",
-    "license": "MIT",
-    "authors": [
-        {
-            "name": "Robert Teschmacher",
-            "email": "r.teschmacher@gmail.com"
-        }
-    ],
-    "minimum-stability": "dev",
-    "require": {
-        "php": "^7.3",
-        "guzzlehttp/guzzle": "~6.0"
-    },
-    "extra": {
-        "laravel": {
-            "providers": [
-                "Robtesch\\Watsontts\\WatsonttsServiceProvider"
-            ]
-        },
-        "branch-alias": {
-            "dev-master": "1.0-dev"
-        }
-    },
-    "autoload": {
-        "psr-4": {
-            "Robtesch\\Watsontts\\": "src/"
-        }
+  "name": "robtesch/watson_tts",
+  "description": "A Laravel package for making use of IBM's Watson Text-To-Speech Service",
+  "keywords": [
+    "watson",
+    "ibm",
+    "php",
+    "tts",
+    "text-to-speech"
+  ],
+  "homepage": "https://github.com/robtesch/watson-tts",
+  "license": "MIT",
+  "authors": [
+    {
+      "name": "Robert Teschmacher",
+      "email": "r.teschmacher@gmail.com"
     }
+  ],
+  "minimum-stability": "dev",
+  "require": {
+    "php": "^7.3",
+    "illuminate/support": "^5.5,<5.8",
+    "guzzlehttp/guzzle": "~6.0"
+  },
+  "extra": {
+    "laravel": {
+      "providers": [
+        "Robtesch\\Watsontts\\WatsonttsServiceProvider"
+      ]
+    }
+  },
+  "autoload": {
+    "psr-4": {
+      "Robtesch\\Watsontts\\": "src"
+    }
+  }
 }

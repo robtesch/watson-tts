@@ -9,8 +9,7 @@ class Client {
     protected $username;
     protected $password;
 
-    public function __construct()
-    {
+    public function __construct() {
         $this->endpoint = config('watson-tts.endpoint');
     }
 }
