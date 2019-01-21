@@ -4,7 +4,12 @@ namespace Robtesch\Watsontts;
 
 use GuzzleHttp\Client as GuzzleClient;
 
-class Client extends GuzzleClient {
+/**
+ * Class Client
+ * @package Robtesch\Watsontts
+ */
+class Client extends GuzzleClient
+{
 
     protected $endpoint;
     protected $apiVersion;
@@ -15,7 +20,8 @@ class Client extends GuzzleClient {
     /**
      * Client constructor.
      */
-    public function __construct() {
+    public function __construct()
+    {
         $this->endpoint = config('watson-tts.endpoint') ?? 'https://stream.watsonplatform.net/text-to-speech/api';
         $this->apiVersion = config('watson-tts.api_version') ?? 'v1';
         $this->username = config('watson-tts.username') ?? '';
@@ -33,35 +39,53 @@ class Client extends GuzzleClient {
      * @return mixed|\Psr\Http\Message\ResponseInterface
      * @throws \GuzzleHttp\Exception\GuzzleException
      */
-    public function request($method, $uri = "", array $options = []) {
-
+    public function request($method, $uri = "", array $options = [])
+    {
         $uri = ltrim($uri, "/");
 
-        return json_decode(
-            (string)parent::request($method, $uri, $options)
-                          ->getBody()
-        );
+        return json_decode((string)parent::request($method, $uri, $options)
+                                         ->getBody());
     }
 
-    public function setEndpoint(string $endpoint) {
+    /**
+     * @param string $endpoint
+     * @return $this
+     */
+    public function setEndpoint(string $endpoint)
+    {
         $this->endpoint = $endpoint;
 
         return $this;
     }
 
-    public function setApiVersion(string $apiVersion) {
+    /**
+     * @param string $apiVersion
+     * @return $this
+     */
+    public function setApiVersion(string $apiVersion)
+    {
         $this->apiVersion = $apiVersion;
 
         return $this;
     }
 
-    public function setUsername(string $username) {
+    /**
+     * @param string $username
+     * @return $this
+     */
+    public function setUsername(string $username)
+    {
         $this->username = $username;
 
         return $this;
     }
 
-    public function setPassword(string $password) {
+    /**
+     * @param string $password
+     * @return $this
+     */
+    public function setPassword(string $password)
+    {
         $this->password = $password;
 
         return $this;

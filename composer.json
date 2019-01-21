@@ -19,7 +19,7 @@
   "minimum-stability": "dev",
   "require": {
     "php": "^7.3",
-    "illuminate/support": "^5.5,<5.8",
+    "illuminate/support": "^5.7",
     "guzzlehttp/guzzle": "~6.0"
   },
   "extra": {

@@ -14,7 +14,7 @@ return [
     | London: https://gateway-lon.watsonplatform.net/text-to-speech/api
     |
     */
-    'endpoint' => env('WATSON_ENDPOINT', 'https://stream.watsonplatform.net/text-to-speech/api'),
+    'endpoint'    => env('WATSON_ENDPOINT', 'https://stream.watsonplatform.net/text-to-speech/api'),
     /*
     |--------------------------------------------------------------------------
     | IBM Watson API Version
@@ -35,6 +35,6 @@ return [
     | for more details.
     |
     */
-    'username' => env('WATSON_USERNAME', ''),
-    'password' => env('WATSON_PASSWORD', ''),
+    'username'    => env('WATSON_USERNAME', ''),
+    'password'    => env('WATSON_PASSWORD', ''),
 ];

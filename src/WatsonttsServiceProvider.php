@@ -4,13 +4,19 @@ namespace Robtesch\Watsontts;
 
 use Illuminate\Support\ServiceProvider;
 
-class WatsonttsServiceProvider extends ServiceProvider {
+/**
+ * Class WatsonttsServiceProvider
+ * @package Robtesch\Watsontts
+ */
+class WatsonttsServiceProvider extends ServiceProvider
+{
 
     /**
      * Bootstrap services.
      * @return void
      */
-    public function boot() {
+    public function boot()
+    {
         $configPath = __DIR__ . '/../config/watson-tts.php';
         if (function_exists('config_path')) {
             $publishPath = config_path('watson-tts.php');
@@ -24,14 +30,13 @@ class WatsonttsServiceProvider extends ServiceProvider {
      * Register services.
      * @return void
      */
-    public function register() {
+    public function register()
+    {
         $configPath = __DIR__ . '/../config/watson-tts.php';
         $this->mergeConfigFrom($configPath, 'watson-tts');
-
-        $this->app->singleton(Watsontts::class,
-            function () {
-                return new Watsontts();
-            });
+        $this->app->singleton(Watsontts::class, function () {
+            return new Watsontts();
+        });
         $this->app->alias(Watsontts::class, 'watson-tts');
     }
 }
