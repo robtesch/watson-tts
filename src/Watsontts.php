@@ -2,15 +2,25 @@
 
 namespace Robtesch\Watsontts;
 
+use Voice;
+
 class Watsontts {
 
-    /**
-     * Multiplies the two given numbers
-     * @param int $a
-     * @param int $b
-     * @return int
-     */
-    public function multiply($a, $b) {
-        return $a * $b;
+    protected $client;
+
+    public function __construct() {
+        $this->client = new Client();
+    }
+
+    public function getVoices() {
+        $response = $this->client->request('GET', 'voices');
+
+        $voices = [];
+
+        foreach($response->voices as $voiceData) {
+            $voices[] = new Voice($voiceData);
+        }
+
+        return $voices;
     }
 }
