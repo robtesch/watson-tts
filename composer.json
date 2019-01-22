@@ -19,8 +19,13 @@
   "minimum-stability": "dev",
   "require": {
     "php": "^7.3",
-    "illuminate/support": "^5.7",
-    "guzzlehttp/guzzle": "~6.0"
+    "illuminate/support": "^5.5,<5.8",
+    "illuminate/filesystem": "^5.5,<5.8",
+    "guzzlehttp/guzzle": "~6.0",
+    "wapmorgan/media-file": "^0.1.4"
+  },
+  "require-dev": {
+    "illuminate/config": "^5.1,<5.8"
   },
   "extra": {
     "laravel": {

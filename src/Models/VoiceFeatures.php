@@ -10,7 +10,7 @@ class VoiceFeatures
 {
 
     protected $voiceTransformation;
-    protected $customPronounciation;
+    protected $customPronunciation;
 
     /**
      * VoiceFeatures constructor.
@@ -19,6 +19,6 @@ class VoiceFeatures
     public function __construct($properties = null)
     {
         $this->voiceTransformation = $properties->voice_transformation ?? false;
-        $this->customPronounciation = $properties->custom_pronunciation ?? false;
+        $this->customPronunciation = $properties->custom_pronunciation ?? false;
     }
 }

@@ -37,4 +37,18 @@ return [
     */
     'username'    => env('WATSON_USERNAME', ''),
     'password'    => env('WATSON_PASSWORD', ''),
+
+    /*
+    |--------------------------------------------------------------------------
+    | FileSystem
+    |--------------------------------------------------------------------------
+    |
+    | This package requires access to a Laravel filesystem in order to save
+    | the generated audio files. Default is "local" but you can use
+    | any filesystem in your config.filesystems.disks that has a
+    | "root" path.
+    |
+    */
+
+    'filesystem' => env('WATSON_FILESYSTEM_DISK', 'local'),
 ];

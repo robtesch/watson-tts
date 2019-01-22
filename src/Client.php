@@ -22,10 +22,10 @@ class Client extends GuzzleClient
      */
     public function __construct()
     {
-        $this->endpoint = config('watson-tts.endpoint') ?? 'https://stream.watsonplatform.net/text-to-speech/api';
-        $this->apiVersion = config('watson-tts.api_version') ?? 'v1';
-        $this->username = config('watson-tts.username') ?? '';
-        $this->password = config('watson-tts.password') ?? '';
+        $this->endpoint = config('watson-tts.endpoint', 'https://stream.watsonplatform.net/text-to-speech/api');
+        $this->apiVersion = config('watson-tts.api_version', 'v1');
+        $this->username = config('watson-tts.username', '');
+        $this->password = config('watson-tts.password', '');
         parent::__construct([
             'base_uri' => $this->endpoint . "/" . ltrim($this->apiVersion, "/") . "/",
             'auth'     => [$this->username, $this->password],
