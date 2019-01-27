@@ -3,6 +3,7 @@
 namespace Robtesch\Watsontts;
 
 use Illuminate\Support\Facades\Storage;
+use Robtesch\Watsontts\Exceptions\ValidationException;
 use Robtesch\Watsontts\Models\Synthesis;
 use wapmorgan\MediaFile\MediaFile;
 
@@ -20,6 +21,7 @@ class MediaProcessor
      * @param string $voice
      * @param null   $customisationId
      * @return Synthesis
+     * @throws ValidationException
      * @throws \wapmorgan\MediaFile\Exceptions\FileAccessException
      */
     public function processFile(string $path, string $extension, string $text, string $voice, $customisationId = null)
@@ -32,7 +34,7 @@ class MediaProcessor
             $sampleRate = $audio->getSampleRate();
             $channels = $audio->getChannels();
         } else {
-            throw new \Exception('File is not a supported audio format', 422);
+            throw new ValidationException('File is not a supported audio format', 422);
         }
         $pathRoot = config('filesystems.disks.' . config('watson-tts.endpoint', 'local') . '.root');
         $relativePath = substr($path, strlen($pathRoot));

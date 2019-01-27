@@ -2,6 +2,8 @@
 
 namespace Robtesch\Watsontts\Models;
 
+use Robtesch\Watsontts\Exceptions\ValidationException;
+
 /**
  * Class Voice
  * @package Robtesch\Watsontts\Models
@@ -142,7 +144,7 @@ class Voice
 
             return $this;
         }
-        throw new \Exception('Supported Features must be either an array or object');
+        throw new ValidationException('Supported Features must be either an array or object');
     }
 
     /**

@@ -2,6 +2,9 @@
 
 namespace Robtesch\Watsontts\Models;
 
+use Robtesch\Watsontts\Exceptions\FileSystemException;
+use Robtesch\Watsontts\Exceptions\ValidationException;
+
 /**
  * Class Validator
  * @package Robtesch\Watsontts\Models
@@ -32,7 +35,7 @@ class Validator
             'audio/webm;codecs=vorbis',
         ];
         if (!in_array($accept, $allowedAcceptTypes)) {
-            throw new \Exception('Accept type is not in allowed list of values. See https://cloud.ibm.com/docs/services/text-to-speech/http.html#format for a list of allowed values.', 422);
+            throw new ValidationException('Accept type is not in allowed list of values. See https://cloud.ibm.com/docs/services/text-to-speech/http.html#format for a list of allowed values.', 422);
         }
 
         return $accept;
@@ -46,10 +49,10 @@ class Validator
     public function validatePath(string $path)
     {
         if (file_exists($path)) {
-            throw new \Exception('File already exists. Please use a different file name.', 422);
+            throw new FileSystemException('File already exists. Please use a different file name.', 422);
         }
         if (!is_writable(dirname($path))) {
-            throw new \Exception('Path provided is not writable!', 422);
+            throw new FileSystemException('Path provided is not writable!', 422);
         }
 
         return $path;
@@ -79,7 +82,7 @@ class Validator
             'pt-BR_IsabelaVoice',
         ];
         if (!in_array($voiceName, $allowedVoices)) {
-            throw new \Exception('Voice is not in allowed list of values. See https://cloud.ibm.com/apidocs/text-to-speech#get-a-voice for a list of allowed values.', 422);
+            throw new ValidationException('Voice is not in allowed list of values. See https://cloud.ibm.com/apidocs/text-to-speech#get-a-voice for a list of allowed values.', 422);
         }
 
         return $voiceName;
