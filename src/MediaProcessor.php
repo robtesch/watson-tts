@@ -36,7 +36,7 @@ class MediaProcessor
         } else {
             throw new ValidationException('File is not a supported audio format', 422);
         }
-        $pathRoot = config('filesystems.disks.' . config('watson-tts.endpoint', 'local') . '.root');
+        $pathRoot = config('filesystems.disks.' . config('watson-tts.filesystem', 'local') . '.root');
         $relativePath = substr($path, strlen($pathRoot));
         $size = Storage::size($relativePath);
 
@@ -50,7 +50,8 @@ class MediaProcessor
             'text'            => $text,
             'voice'           => $voice,
             'customisationId' => $customisationId,
-            'path'            => $path,
+            'fullPath'        => $path,
+            'relativePath'    => $relativePath,
         ]);
     }
 }

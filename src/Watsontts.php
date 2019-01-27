@@ -57,6 +57,7 @@ class Watsontts
      * @param string $accept
      * @param null   $customisationId
      * @return string
+     * @throws Exceptions\ValidationException
      * @throws \GuzzleHttp\Exception\GuzzleException
      * @throws \wapmorgan\MediaFile\Exceptions\FileAccessException
      */
@@ -121,6 +122,7 @@ class Watsontts
      * @param string $accept
      * @param null   $customisationId
      * @return Synthesis
+     * @throws Exceptions\ValidationException
      * @throws \GuzzleHttp\Exception\GuzzleException
      * @throws \wapmorgan\MediaFile\Exceptions\FileAccessException
      */

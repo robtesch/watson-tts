@@ -18,7 +18,8 @@ class Synthesis
     protected $text;
     protected $voice;
     protected $customisationId;
-    protected $path;
+    protected $fullPath;
+    protected $relativePath;
 
     /**
      * Synthesis constructor.
@@ -35,6 +36,20 @@ class Synthesis
         $this->text = $data['text'];
         $this->voice = $data['voice'];
         $this->customisationId = $data['customisationId'];
-        $this->path = $data['path'];
+        $this->fullPath = $data['fullPath'];
+        $this->relativePath = $data['relativePath'];
+    }
+
+    /**
+     * @return \Symfony\Component\HttpFoundation\BinaryFileResponse
+     */
+    public function download()
+    {
+        return response()->download($this->fullPath);
+    }
+
+    public function file()
+    {
+        return response()->file($this->fullPath);
     }
 }

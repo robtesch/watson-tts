@@ -22,7 +22,8 @@
     "illuminate/support": "^5.5,<5.8",
     "illuminate/filesystem": "^5.5,<5.8",
     "guzzlehttp/guzzle": "~6.0",
-    "wapmorgan/media-file": "^0.1.4"
+    "wapmorgan/media-file": "^0.1.4",
+    "symfony/http-foundation": "^4.3"
   },
   "require-dev": {
     "illuminate/config": "^5.1,<5.8"
