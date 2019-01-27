@@ -18,11 +18,11 @@ class MediaProcessor
      * @param string $extension
      * @param string $text
      * @param string $voice
-     * @param string $customisationId
+     * @param null   $customisationId
      * @return Synthesis
      * @throws \wapmorgan\MediaFile\Exceptions\FileAccessException
      */
-    public function processFile(string $path, string $extension, string $text, string $voice, string $customisationId)
+    public function processFile(string $path, string $extension, string $text, string $voice, $customisationId = null)
     {
         $media = MediaFile::open($path);
         if ($media->isAudio()) {
