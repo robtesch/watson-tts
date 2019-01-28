@@ -5,7 +5,9 @@ namespace Robtesch\Watsontts;
 use Illuminate\Support\Facades\Storage;
 use Robtesch\Watsontts\Exceptions\ValidationException;
 use Robtesch\Watsontts\Models\Synthesis;
+use wapmorgan\MediaFile\AudioAdapter;
 use wapmorgan\MediaFile\MediaFile;
+use Illuminate\Support\Facades\Config;
 
 /**
  * Class MediaProcessor
@@ -28,6 +30,7 @@ class MediaProcessor
     {
         $media = MediaFile::open($path);
         if ($media->isAudio()) {
+            /** @var AudioAdapter $audio */
             $audio = $media->getAudio();
             $length = $audio->getLength();
             $bitRate = $audio->getBitRate();
@@ -36,8 +39,9 @@ class MediaProcessor
         } else {
             throw new ValidationException('File is not a supported audio format', 422);
         }
-        $pathRoot = config('filesystems.disks.' . config('watson-tts.filesystem', 'local') . '.root');
+        $pathRoot = Config::get('filesystems.disks.' . Config::get('watson-tts.filesystem', 'local') . '.root');
         $relativePath = substr($path, strlen($pathRoot));
+        /** @noinspection PhpUndefinedMethodInspection */
         $size = Storage::size($relativePath);
 
         return new Synthesis([

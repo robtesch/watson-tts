@@ -2,8 +2,8 @@
 
 namespace Robtesch\Watsontts;
 
+use Robtesch\Watsontts\Exceptions\ValidationException;
 use Robtesch\Watsontts\Models\Synthesis;
-use Robtesch\Watsontts\Models\Validator;
 use Robtesch\Watsontts\Models\Voice;
 
 /**
@@ -16,9 +16,13 @@ class Watsontts
     protected $client;
     protected $validator;
 
-    public function __construct()
+    /**
+     * Watsontts constructor.
+     * @param Client|null $client
+     */
+    public function __construct(Client $client = null)
     {
-        $this->client = new Client();
+        $this->client = is_null($client) ? new Client() : $client;
         $this->validator = new Validator();
     }
 
@@ -61,14 +65,16 @@ class Watsontts
      * @throws \GuzzleHttp\Exception\GuzzleException
      * @throws \wapmorgan\MediaFile\Exceptions\FileAccessException
      */
-    public function synthesizeAudioGet(string $text, $voice, string $savePath, string $accept = 'audio/ogg;codecs=opus', $customisationId = null)
+    public function synthesizeAudioGet(string $text, $voice, string $savePath, string $accept = null, $customisationId = null)
     {
         if ($voice instanceof Voice) {
             $voice = $voice->getName();
         }
         $voiceName = $this->validator->validateVoiceName($voice);
-        $acceptString = $this->validator->validateAcceptTypes($accept);
-        $savePath = $this->validator->validatePath($savePath);
+        $acceptString = $this->validator->validateAcceptTypes($savePath, $accept);
+        $extension = $this->getFileExtension($savePath, $acceptString, false);
+        $sink = $savePath . $extension;
+        $savePath = $this->validator->validatePath($sink);
         $queryData = [
             'accept' => $acceptString,
             'text'   => $text,
@@ -77,24 +83,23 @@ class Watsontts
         if (!is_null($customisationId)) {
             $queryData['customization_id'] = $customisationId;
         }
-        $extension = $this->getFileExtension($acceptString, false);
-        $sink = $savePath . $extension;
-        $response = $this->client->request('GET', 'synthesize', ['query' => $queryData, 'sink' => $sink, 'headers' => ['Accept' => $accept]]);
+        $this->client->request('GET', 'synthesize', ['query' => $queryData, 'sink' => $savePath, 'headers' => ['Accept' => $accept]]);
         $mediaProcessor = new MediaProcessor();
 
         return $mediaProcessor->processFile($sink, $extension, $text, $voice, $customisationId);
     }
 
     /**
+     * @param string $savePath
      * @param string $accept
      * @param bool   $validate
      * @return mixed
-     * @throws \Exception
+     * @throws ValidationException
      */
-    public function getFileExtension(string $accept, $validate = false)
+    public function getFileExtension(string $savePath, string $accept, $validate = false)
     {
         if ($validate) {
-            $accept = $this->validator->validateAcceptTypes($accept);
+            $accept = $this->validator->validateAcceptTypes($savePath, $accept);
         }
         $fileExtensions = [
             'audio/basic'              => '.au',
@@ -111,6 +116,15 @@ class Watsontts
             'audio/webm;codecs=opus'   => '.webm',
             'audio/webm;codecs=vorbis' => '.webm',
         ];
+        foreach ($fileExtensions as $key => $extension) {
+            if ($this->validator->stringEndsWith($savePath, $extension)) {
+                if ($key === $accept) {
+                    return null;
+                } else {
+                    throw new ValidationException('The provided file extension and the "Accept" type do not match!');
+                }
+            }
+        }
 
         return $fileExtensions[$accept];
     }
@@ -132,8 +146,10 @@ class Watsontts
             $voice = $voice->getName();
         }
         $voiceName = $this->validator->validateVoiceName($voice);
-        $acceptString = $this->validator->validateAcceptTypes($accept);
-        $savePath = $this->validator->validatePath($savePath);
+        $acceptString = $this->validator->validateAcceptTypes($savePath, $accept);
+        $extension = $this->getFileExtension($acceptString, false);
+        $sink = $savePath . $extension;
+        $savePath = $this->validator->validatePath($sink);
         $queryData = [
             'accept' => $acceptString,
             'voice'  => $voiceName,
@@ -141,9 +157,7 @@ class Watsontts
         if (!is_null($customisationId)) {
             $queryData['customization_id'] = $customisationId;
         }
-        $extension = $this->getFileExtension($acceptString, false);
-        $sink = $savePath . $extension;
-        $response = $this->client->request('POST', 'synthesize', ['json' => ['text' => $text], 'query' => $queryData, 'sink' => $sink, 'headers' => ['Accept' => $accept]]);
+        $this->client->request('POST', 'synthesize', ['json' => ['text' => $text], 'query' => $queryData, 'sink' => $savePath, 'headers' => ['Accept' => $accept]]);
         $mediaProcessor = new MediaProcessor();
 
         return $mediaProcessor->processFile($sink, $extension, $text, $voice, $customisationId);

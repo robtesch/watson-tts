@@ -3,6 +3,7 @@
 namespace Robtesch\Watsontts;
 
 use GuzzleHttp\Client as GuzzleClient;
+use Illuminate\Support\Facades\Config;
 
 /**
  * Class Client
@@ -19,13 +20,14 @@ class Client extends GuzzleClient
 
     /**
      * Client constructor.
+     * @param array|null $config
      */
-    public function __construct()
+    public function __construct(array $config = null)
     {
-        $this->endpoint = config('watson-tts.endpoint', 'https://stream.watsonplatform.net/text-to-speech/api');
-        $this->apiVersion = config('watson-tts.api_version', 'v1');
-        $this->username = config('watson-tts.username', '');
-        $this->password = config('watson-tts.password', '');
+        $this->endpoint = $config['endpoint'] ?? Config::get('watson-tts.endpoint', 'https://stream.watsonplatform.net/text-to-speech/api');
+        $this->apiVersion =  $config['api_version'] ?? Config::get('watson-tts.api_version', 'v1');
+        $this->username =  $config['username'] ?? Config::get('watson-tts.username', '');
+        $this->password =  $config['password'] ?? Config::get('watson-tts.password', '');
         parent::__construct([
             'base_uri' => $this->endpoint . "/" . ltrim($this->apiVersion, "/") . "/",
             'auth'     => [$this->username, $this->password],

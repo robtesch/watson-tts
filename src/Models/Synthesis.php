@@ -45,11 +45,16 @@ class Synthesis
      */
     public function download()
     {
+        /** @noinspection PhpUndefinedFunctionInspection */
         return response()->download($this->fullPath);
     }
 
+    /**
+     * @return mixed
+     */
     public function file()
     {
+        /** @noinspection PhpUndefinedFunctionInspection */
         return response()->file($this->fullPath);
     }
 }
