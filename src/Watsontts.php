@@ -3,6 +3,7 @@
 namespace Robtesch\Watsontts;
 
 use Robtesch\Watsontts\Exceptions\ValidationException;
+use Robtesch\Watsontts\Models\CustomModel;
 use Robtesch\Watsontts\Models\Synthesis;
 use Robtesch\Watsontts\Models\Voice;
 
@@ -31,6 +32,7 @@ class Watsontts
      * @throws \GuzzleHttp\Exception\GuzzleException
      */
     public function getVoices()
+    : array
     {
         $response = $this->client->request('GET', 'voices');
         $voices = [];
@@ -47,7 +49,7 @@ class Watsontts
      * @throws \GuzzleHttp\Exception\GuzzleException
      */
     public function getVoice(string $voice)
-    {
+    : Voice {
         $voice = $this->validator->validateVoiceName($voice);
         $response = $this->client->request('GET', 'voices/' . $voice);
 
@@ -55,99 +57,23 @@ class Watsontts
     }
 
     /**
-     * @param string $text
-     * @param        $voice
-     * @param string $savePath
-     * @param string $accept
-     * @param null   $customisationId
-     * @return string
-     * @throws Exceptions\ValidationException
-     * @throws \GuzzleHttp\Exception\GuzzleException
-     * @throws \wapmorgan\MediaFile\Exceptions\FileAccessException
-     */
-    public function synthesizeAudioGet(string $text, $voice, string $savePath, string $accept = null, $customisationId = null)
-    {
-        if ($voice instanceof Voice) {
-            $voice = $voice->getName();
-        }
-        $voiceName = $this->validator->validateVoiceName($voice);
-        $acceptString = $this->validator->validateAcceptTypes($savePath, $accept);
-        $extension = $this->getFileExtension($savePath, $acceptString, false);
-        $sink = $savePath . $extension;
-        $savePath = $this->validator->validatePath($sink);
-        $queryData = [
-            'accept' => $acceptString,
-            'text'   => $text,
-            'voice'  => $voiceName,
-        ];
-        if (!is_null($customisationId)) {
-            $queryData['customization_id'] = $customisationId;
-        }
-        $this->client->request('GET', 'synthesize', ['query' => $queryData, 'sink' => $savePath, 'headers' => ['Accept' => $accept]]);
-        $mediaProcessor = new MediaProcessor();
-
-        return $mediaProcessor->processFile($sink, $extension, $text, $voice, $customisationId);
-    }
-
-    /**
-     * @param string $savePath
-     * @param string $accept
-     * @param bool   $validate
-     * @return mixed
-     * @throws ValidationException
-     */
-    public function getFileExtension(string $savePath, string $accept, $validate = false)
-    {
-        if ($validate) {
-            $accept = $this->validator->validateAcceptTypes($savePath, $accept);
-        }
-        $fileExtensions = [
-            'audio/basic'              => '.au',
-            'audio/flac'               => '.flac',
-            'audio/l16'                => '.l16',
-            'audio/ogg'                => '.ogg',
-            'audio/ogg;codecs=opus'    => '.opus',
-            'audio/ogg;codecs=vorbis'  => '.ogg',
-            'audio/mp3'                => '.mp3',
-            'audio/mpeg'               => '.mpeg',
-            'audio/mulaw'              => '.ulaw',
-            'audio/wav'                => '.wav',
-            'audio/webm'               => '.webm',
-            'audio/webm;codecs=opus'   => '.webm',
-            'audio/webm;codecs=vorbis' => '.webm',
-        ];
-        foreach ($fileExtensions as $key => $extension) {
-            if ($this->validator->stringEndsWith($savePath, $extension)) {
-                if ($key === $accept) {
-                    return null;
-                } else {
-                    throw new ValidationException('The provided file extension and the "Accept" type do not match!');
-                }
-            }
-        }
-
-        return $fileExtensions[$accept];
-    }
-
-    /**
-     * @param string $text
-     * @param        $voice
-     * @param string $savePath
-     * @param string $accept
-     * @param null   $customisationId
+     * @param string       $method
+     * @param string       $text
+     * @param string|Voice $voice
+     * @param string       $savePath
+     * @param string       $accept
+     * @param string|null  $customisationId
      * @return Synthesis
-     * @throws Exceptions\ValidationException
+     * @throws ValidationException
      * @throws \GuzzleHttp\Exception\GuzzleException
      * @throws \wapmorgan\MediaFile\Exceptions\FileAccessException
      */
-    public function synthesizeAudio(string $text, $voice, string $savePath, string $accept = 'audio/ogg;codecs=opus', $customisationId = null)
-    {
-        if ($voice instanceof Voice) {
-            $voice = $voice->getName();
-        }
+    public function synthesizeAudio(string $method, string $text, $voice, string $savePath, string $accept = null, string $customisationId = null)
+    : Synthesis {
+        $method = $this->validator->validateMethod($method);
         $voiceName = $this->validator->validateVoiceName($voice);
         $acceptString = $this->validator->validateAcceptTypes($savePath, $accept);
-        $extension = $this->getFileExtension($acceptString, false);
+        $extension = $this->validator->getFileExtension($savePath, $acceptString, false);
         $sink = $savePath . $extension;
         $savePath = $this->validator->validatePath($sink);
         $queryData = [
@@ -157,9 +83,65 @@ class Watsontts
         if (!is_null($customisationId)) {
             $queryData['customization_id'] = $customisationId;
         }
-        $this->client->request('POST', 'synthesize', ['json' => ['text' => $text], 'query' => $queryData, 'sink' => $savePath, 'headers' => ['Accept' => $accept]]);
+        if ($method === 'GET') {
+            $queryData['text'] = $text;
+            $this->client->request('GET', 'synthesize', ['query' => $queryData, 'sink' => $savePath, 'headers' => ['Accept' => $accept]]);
+        } else {
+            $this->client->request('POST', 'synthesize', ['json' => ['text' => $text], 'query' => $queryData, 'sink' => $savePath, 'headers' => ['Accept' => $accept]]);
+        }
         $mediaProcessor = new MediaProcessor();
 
         return $mediaProcessor->processFile($sink, $extension, $text, $voice, $customisationId);
+    }
+
+    /**
+     * @param string       $text
+     * @param string|Voice $voice
+     * @param string|null  $format
+     * @param string|null  $customisationId
+     * @return string
+     * @throws ValidationException
+     * @throws \GuzzleHttp\Exception\GuzzleException
+     */
+    public function getPronunciation(string $text, $voice, string $format = null, string $customisationId = null)
+    : string {
+        $voice = $this->validator->validateVoiceName($voice);
+        $format = $this->validator->validateFormat($format);
+        $queryData = [
+            'text'   => $text,
+            'voice'  => $voice,
+            'format' => $format,
+        ];
+        if (!is_null($customisationId)) {
+            $queryData['customization_id'] = $customisationId;
+        }
+        $response = $this->client->request('GET', 'pronunciation', ['query' => $queryData]);
+
+        return $response;
+    }
+
+    /**
+     * @param string      $name
+     * @param string|null $language
+     * @param string|null $description
+     * @return string
+     * @throws ValidationException
+     * @throws \GuzzleHttp\Exception\GuzzleException
+     */
+    public function createCustomModel(string $name, string $language = null, string $description = null)
+    {
+        $jsonArray = [
+            'name' => $name,
+        ];
+        if (!is_null($language)) {
+            $language = $this->validator->validateLanguage($language);
+            $jsonArray['language'] = $language;
+        }
+        if (!is_null($description)) {
+            $jsonArray['description'] = $description;
+        }
+        $response = $this->client->request('POST', 'customizations', ['json' => $jsonArray]);
+
+        return new CustomModel($response);
     }
 }

@@ -2,12 +2,12 @@
 
 namespace Robtesch\Watsontts;
 
+use Illuminate\Support\Facades\Config;
 use Illuminate\Support\Facades\Storage;
 use Robtesch\Watsontts\Exceptions\ValidationException;
 use Robtesch\Watsontts\Models\Synthesis;
 use wapmorgan\MediaFile\AudioAdapter;
 use wapmorgan\MediaFile\MediaFile;
-use Illuminate\Support\Facades\Config;
 
 /**
  * Class MediaProcessor
@@ -17,17 +17,17 @@ class MediaProcessor
 {
 
     /**
-     * @param string $path
-     * @param string $extension
-     * @param string $text
-     * @param string $voice
-     * @param null   $customisationId
+     * @param string      $path
+     * @param string      $extension
+     * @param string      $text
+     * @param string      $voice
+     * @param string|null $customisationId
      * @return Synthesis
      * @throws ValidationException
      * @throws \wapmorgan\MediaFile\Exceptions\FileAccessException
      */
-    public function processFile(string $path, string $extension, string $text, string $voice, $customisationId = null)
-    {
+    public function processFile(string $path, string $extension, string $text, string $voice, string $customisationId = null)
+    : Synthesis {
         $media = MediaFile::open($path);
         if ($media->isAudio()) {
             /** @var AudioAdapter $audio */
