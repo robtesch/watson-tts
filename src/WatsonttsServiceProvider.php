@@ -34,9 +34,9 @@ class WatsonttsServiceProvider extends ServiceProvider
     {
         $configPath = __DIR__ . '/../config/watson-tts.php';
         $this->mergeConfigFrom($configPath, 'watson-tts');
-        $this->app->singleton(Watsontts::class, function () {
-            return new Watsontts();
+        $this->app->bind('Watsontts', function () {
+            return new Watsontts;
         });
-        $this->app->alias(Watsontts::class, 'watson-tts');
+        $this->app->alias(Watsontts::class, 'Watsontts');
     }
 }

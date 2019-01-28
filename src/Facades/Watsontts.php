@@ -20,6 +20,6 @@ class Watsontts extends Facade
      */
     protected static function getFacadeAccessor()
     {
-        return 'watson-tts';
+        return 'Watsontts';
     }
 }

@@ -34,7 +34,10 @@
     "laravel": {
       "providers": [
         "Robtesch\\Watsontts\\WatsonttsServiceProvider"
-      ]
+      ],
+      "aliases": {
+        "Watsontts": "Robtesch\\Watsontts\\Facades\\Watsontts"
+      }
     }
   },
   "autoload": {
