@@ -102,6 +102,7 @@ class Watsontts
      * @return string
      * @throws ValidationException
      * @throws \GuzzleHttp\Exception\GuzzleException
+     * @throws \Exception
      */
     public function getPronunciation(string $text, $voice, string $format = null, string $customisationId = null)
     : string {
@@ -117,18 +118,22 @@ class Watsontts
         }
         $response = $this->client->request('GET', 'pronunciation', ['query' => $queryData]);
 
-        return $response;
+        if(property_exists($response, 'pronunciation')) {
+            return $response->pronunciation;
+        } else {
+            throw new \Exception('Response from Watson malformed', 501);
+        }
     }
 
     /**
      * @param string      $name
-     * @param string|null $language
      * @param string|null $description
+     * @param string|null $language
      * @return string
      * @throws ValidationException
      * @throws \GuzzleHttp\Exception\GuzzleException
      */
-    public function createCustomModel(string $name, string $language = null, string $description = null)
+    public function createCustomModel(string $name, string $description = null, string $language = null)
     {
         $jsonArray = [
             'name' => $name,

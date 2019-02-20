@@ -109,10 +109,10 @@ class Validator
     public function getFileExtension(string $savePath, string $accept, $validate = false)
     : string {
         if ($validate) {
-            $accept = $this->validator->validateAcceptTypes($savePath, $accept);
+            $accept = $this->validateAcceptTypes($savePath, $accept);
         }
         foreach (Constants::FILE_EXTENSIONS as $key => $extension) {
-            if ($this->validator->stringEndsWith($savePath, $extension)) {
+            if ($this->stringEndsWith($savePath, $extension)) {
                 if ($key === $accept) {
                     return '';
                 } else {
