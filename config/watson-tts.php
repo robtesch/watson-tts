@@ -1,7 +1,5 @@
 <?php
-
 return [
-
     /*
     |--------------------------------------------------------------------------
     | IBM Watson API Endpoint
@@ -16,9 +14,7 @@ return [
     | London: https://gateway-lon.watsonplatform.net/text-to-speech/api
     |
     */
-
-    'endpoint' => env('WATSON_ENDPOINT', 'https://stream.watsonplatform.net/text-to-speech/api'),
-
+    'endpoint'    => env('WATSON_ENDPOINT', 'https://stream.watsonplatform.net/text-to-speech/api'),
     /*
     |--------------------------------------------------------------------------
     | IBM Watson API Version
@@ -27,9 +23,7 @@ return [
     | Currently only support "v1"
     |
     */
-
-    'api_version'   => env('WATSON_API_VERSION', 'v1'),
-
+    'api_version' => env('WATSON_API_VERSION', 'v1'),
     /*
     |--------------------------------------------------------------------------
     | IBM Watson API Credentials
@@ -41,9 +35,20 @@ return [
     | for more details.
     |
     */
+    'username'    => env('WATSON_USERNAME', ''),
+    'password'    => env('WATSON_PASSWORD', ''),
 
-    'username' => env('WATSON_USERNAME', ''),
+    /*
+    |--------------------------------------------------------------------------
+    | FileSystem
+    |--------------------------------------------------------------------------
+    |
+    | This package requires access to a Laravel filesystem in order to save
+    | the generated audio files. Default is "local" but you can use
+    | any filesystem in your config.filesystems.disks that has a
+    | "root" path.
+    |
+    */
 
-    'password' => env('WATSON_PASSWORD', ''),
-
+    'filesystem' => env('WATSON_FILESYSTEM_DISK', 'local'),
 ];
