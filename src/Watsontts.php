@@ -2,10 +2,14 @@
 
 namespace Robtesch\Watsontts;
 
+use Exception;
+use GuzzleHttp\Exception\GuzzleException;
 use Robtesch\Watsontts\Exceptions\ValidationException;
 use Robtesch\Watsontts\Models\CustomModel;
 use Robtesch\Watsontts\Models\Synthesis;
 use Robtesch\Watsontts\Models\Voice;
+use RuntimeException;
+use wapmorgan\MediaFile\Exceptions\FileAccessException;
 
 /**
  * Class Watsontts
@@ -23,13 +27,13 @@ class Watsontts
      */
     public function __construct(Client $client = null)
     {
-        $this->client = is_null($client) ? new Client() : $client;
+        $this->client = $client ?? new Client();
         $this->validator = new Validator();
     }
 
     /**
      * @return array
-     * @throws \GuzzleHttp\Exception\GuzzleException
+     * @throws GuzzleException
      */
     public function getVoices()
     : array
@@ -46,7 +50,7 @@ class Watsontts
     /**
      * @param string $voice
      * @return Voice
-     * @throws \GuzzleHttp\Exception\GuzzleException
+     * @throws GuzzleException
      */
     public function getVoice(string $voice)
     : Voice {
@@ -65,22 +69,22 @@ class Watsontts
      * @param string|null  $customisationId
      * @return Synthesis
      * @throws ValidationException
-     * @throws \GuzzleHttp\Exception\GuzzleException
-     * @throws \wapmorgan\MediaFile\Exceptions\FileAccessException
+     * @throws GuzzleException
+     * @throws FileAccessException
      */
     public function synthesizeAudio(string $method, string $text, $voice, string $savePath, string $accept = null, string $customisationId = null)
     : Synthesis {
         $method = $this->validator->validateMethod($method);
         $voiceName = $this->validator->validateVoiceName($voice);
         $acceptString = $this->validator->validateAcceptTypes($savePath, $accept);
-        $extension = $this->validator->getFileExtension($savePath, $acceptString, false);
+        $extension = $this->validator->getFileExtension($savePath, $acceptString);
         $sink = $savePath . $extension;
         $savePath = $this->validator->validatePath($sink);
         $queryData = [
             'accept' => $acceptString,
             'voice'  => $voiceName,
         ];
-        if (!is_null($customisationId)) {
+        if ($customisationId !== null) {
             $queryData['customization_id'] = $customisationId;
         }
         if ($method === 'GET') {
@@ -101,8 +105,8 @@ class Watsontts
      * @param string|null  $customisationId
      * @return string
      * @throws ValidationException
-     * @throws \GuzzleHttp\Exception\GuzzleException
-     * @throws \Exception
+     * @throws GuzzleException
+     * @throws Exception
      */
     public function getPronunciation(string $text, $voice, string $format = null, string $customisationId = null)
     : string {
@@ -113,16 +117,14 @@ class Watsontts
             'voice'  => $voice,
             'format' => $format,
         ];
-        if (!is_null($customisationId)) {
+        if ($customisationId !== null) {
             $queryData['customization_id'] = $customisationId;
         }
         $response = $this->client->request('GET', 'pronunciation', ['query' => $queryData]);
-
-        if(property_exists($response, 'pronunciation')) {
+        if (property_exists($response, 'pronunciation')) {
             return $response->pronunciation;
-        } else {
-            throw new \Exception('Response from Watson malformed', 501);
         }
+        throw new RuntimeException('Response from Watson malformed', 501);
     }
 
     /**
@@ -131,18 +133,18 @@ class Watsontts
      * @param string|null $language
      * @return string
      * @throws ValidationException
-     * @throws \GuzzleHttp\Exception\GuzzleException
+     * @throws GuzzleException
      */
     public function createCustomModel(string $name, string $description = null, string $language = null)
-    {
+    : string {
         $jsonArray = [
             'name' => $name,
         ];
-        if (!is_null($language)) {
+        if ($language !== null) {
             $language = $this->validator->validateLanguage($language);
             $jsonArray['language'] = $language;
         }
-        if (!is_null($description)) {
+        if ($description !== null) {
             $jsonArray['description'] = $description;
         }
         $response = $this->client->request('POST', 'customizations', ['json' => $jsonArray]);

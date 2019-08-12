@@ -2,6 +2,7 @@
 
 namespace Robtesch\Watsontts\Models;
 
+use Exception;
 use Robtesch\Watsontts\Exceptions\ValidationException;
 
 /**
@@ -47,7 +48,7 @@ class Voice
      * @return $this
      */
     public function setName(string $name)
-    {
+    : self {
         $this->name = $name;
 
         return $this;
@@ -66,7 +67,7 @@ class Voice
      * @return $this
      */
     public function setLanguage(string $language)
-    {
+    : self {
         $this->language = $language;
 
         return $this;
@@ -77,7 +78,7 @@ class Voice
      * @return $this
      */
     public function setCustomisable(bool $customisable)
-    {
+    : self {
         $this->customizable = $customisable;
 
         return $this;
@@ -87,6 +88,7 @@ class Voice
      * @return string
      */
     public function getGender()
+    : string
     {
         return $this->gender;
     }
@@ -96,7 +98,7 @@ class Voice
      * @return $this
      */
     public function setGender(string $gender)
-    {
+    : self {
         $this->gender = $gender;
 
         return $this;
@@ -115,7 +117,7 @@ class Voice
      * @return $this
      */
     public function setUrl(string $url)
-    {
+    : self {
         $this->url = $url;
 
         return $this;
@@ -125,6 +127,7 @@ class Voice
      * @return VoiceFeatures
      */
     public function getSupportedFeatures()
+    : VoiceFeatures
     {
         return $this->supportedFeatures;
     }
@@ -132,10 +135,10 @@ class Voice
     /**
      * @param $supportedFeatures
      * @return $this
-     * @throws \Exception
+     * @throws Exception
      */
     public function setSupportedFeatures($supportedFeatures)
-    {
+    : self {
         if (is_array($supportedFeatures)) {
             $supportedFeatures = json_decode(json_encode($supportedFeatures));
         }
@@ -160,7 +163,7 @@ class Voice
      * @return $this
      */
     public function setDescription(string $description)
-    {
+    : self {
         $this->description = $description;
 
         return $this;

@@ -3,6 +3,7 @@
 namespace Robtesch\Watsontts\Facades;
 
 use Illuminate\Support\Facades\Facade;
+use RuntimeException;
 
 /**
  * Class Watsontts
@@ -14,9 +15,10 @@ class Watsontts extends Facade
     /**
      * Get the registered name of the component.
      * @return string
-     * @throws \RuntimeException
+     * @throws RuntimeException
      */
     protected static function getFacadeAccessor()
+    : string
     {
         return 'Watsontts';
     }

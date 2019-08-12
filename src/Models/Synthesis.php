@@ -2,6 +2,8 @@
 
 namespace Robtesch\Watsontts\Models;
 
+use Symfony\Component\HttpFoundation\BinaryFileResponse;
+
 /**
  * Class Synthesis
  * @package Robtesch\Watsontts\Models
@@ -41,9 +43,10 @@ class Synthesis
     }
 
     /**
-     * @return \Symfony\Component\HttpFoundation\BinaryFileResponse
+     * @return BinaryFileResponse
      */
     public function download()
+    : BinaryFileResponse
     {
         /** @noinspection PhpUndefinedFunctionInspection */
         return response()->download($this->fullPath);

@@ -34,7 +34,7 @@ class WatsonttsServiceProvider extends ServiceProvider
     {
         $configPath = __DIR__ . '/../config/watson-tts.php';
         $this->mergeConfigFrom($configPath, 'watson-tts');
-        $this->app->bind('Watsontts', function () {
+        $this->app->bind('Watsontts', static function () {
             return new Watsontts;
         });
         $this->app->alias(Watsontts::class, 'Watsontts');
