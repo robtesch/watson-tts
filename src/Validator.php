@@ -2,6 +2,7 @@
 
 namespace Robtesch\Watsontts;
 
+use Exception;
 use Robtesch\Watsontts\Exceptions\FileSystemException;
 use Robtesch\Watsontts\Exceptions\ValidationException;
 use Robtesch\Watsontts\Models\Voice;
@@ -14,46 +15,9 @@ class Validator
 {
 
     /**
-     * @param string $savePath
-     * @param string $accept
-     * @return string
-     * @throws ValidationException
-     */
-    public function validateAcceptTypes(string $savePath, string $accept)
-    : string {
-        if (is_null($accept)) {
-            foreach (Constants::FILE_EXTENSIONS as $key => $extension) {
-                if ($this->stringEndsWith($savePath, $extension)) {
-                    return $key;
-                }
-            }
-        }
-        if (!in_array($accept, array_keys(Constants::FILE_EXTENSIONS))) {
-            throw new ValidationException('Accept type "' . $accept . '" is not in allowed list of values. See https://cloud.ibm.com/docs/services/text-to-speech/http.html#format for a list of allowed values.', 422);
-        }
-
-        return $accept;
-    }
-
-    /**
-     * @param string $haystack
-     * @param string $needle
-     * @return bool
-     */
-    public function stringEndsWith(string $haystack, string $needle)
-    : bool {
-        $length = strlen($needle);
-        if ($length == 0) {
-            return true;
-        }
-
-        return (substr($haystack, ($length * -1)) === $needle);
-    }
-
-    /**
      * @param string $path
      * @return string
-     * @throws \Exception
+     * @throws Exception
      */
     public function validatePath(string $path)
     : string {
@@ -70,18 +34,22 @@ class Validator
     /**
      * @param string|Voice $voice
      * @return string
-     * @throws \Exception
+     * @throws Exception
      */
     public function validateVoiceName($voice)
     : string {
         if ($voice instanceof Voice) {
-            $voice = $voice->getName();
+            $voiceName = $voice->getName();
+        } elseif (is_string($voice)) {
+            $voiceName = $voice;
+        } else {
+            throw new \RuntimeException('variable $voice must be of type string or Voice');
         }
-        if (!in_array($voice, Constants::VOICES)) {
-            throw new ValidationException('Voice "' . $voice . '" is not in allowed list of values. See https://cloud.ibm.com/apidocs/text-to-speech#get-a-voice for a list of allowed values.', 422);
+        if (!in_array($voiceName, Constants::VOICES, false)) {
+            throw new ValidationException('Voice "' . $voiceName . '" is not in allowed list of values. See https://cloud.ibm.com/apidocs/text-to-speech#get-a-voice for a list of allowed values.', 422);
         }
 
-        return $voice;
+        return $voiceName;
     }
 
     /**
@@ -115,13 +83,49 @@ class Validator
             if ($this->stringEndsWith($savePath, $extension)) {
                 if ($key === $accept) {
                     return '';
-                } else {
-                    throw new ValidationException('The provided file extension and the "Accept" type do not match!');
                 }
+                throw new ValidationException('The provided file extension and the "Accept" type do not match!');
             }
         }
 
         return Constants::FILE_EXTENSIONS[$accept];
+    }
+
+    /**
+     * @param string $savePath
+     * @param string $accept
+     * @return string
+     * @throws ValidationException
+     */
+    public function validateAcceptTypes(string $savePath, string $accept)
+    : string {
+        if ($accept === null) {
+            foreach (Constants::FILE_EXTENSIONS as $key => $extension) {
+                if ($this->stringEndsWith($savePath, $extension)) {
+                    return $key;
+                }
+            }
+        }
+        if (!array_key_exists($accept, Constants::FILE_EXTENSIONS)) {
+            throw new ValidationException('Accept type "' . $accept . '" is not in allowed list of values. See https://cloud.ibm.com/docs/services/text-to-speech/http.html#format for a list of allowed values.', 422);
+        }
+
+        return $accept;
+    }
+
+    /**
+     * @param string $haystack
+     * @param string $needle
+     * @return bool
+     */
+    public function stringEndsWith(string $haystack, string $needle)
+    : bool {
+        $length = strlen($needle);
+        if ($length == 0) {
+            return true;
+        }
+
+        return (substr($haystack, $length * -1) === $needle);
     }
 
     /**
@@ -132,10 +136,10 @@ class Validator
     public function validateFormat(string $format = null)
     : string {
         //Return default if not provided.
-        if (is_null($format)) {
+        if ($format === null) {
             return 'ipa';
         }
-        if (!in_array($format, Constants::PRONUNCIATION_FORMATS)) {
+        if (!in_array($format, Constants::PRONUNCIATION_FORMATS, false)) {
             throw new ValidationException('Format "' . $format . '" not allowed, you must use either "ipa" or "ibm"');
         }
 
@@ -150,10 +154,10 @@ class Validator
     public function validateLanguage(string $language = null)
     : string {
         //Return default if not provided.
-        if (is_null($language)) {
+        if ($language === null) {
             return 'en-US';
         }
-        if (!in_array($language, Constants::LANGUAGES)) {
+        if (!in_array($language, Constants::LANGUAGES, false)) {
             throw new ValidationException('Language "' . $language . '" not allowed, visit https://cloud.ibm.com/apidocs/text-to-speech#create-a-custom-model to find out which languages are acceptable');
         }
 

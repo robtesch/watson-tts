@@ -20,15 +20,15 @@
   "prefer-stable": true,
   "require": {
     "php": "^7.3",
-    "illuminate/support": "^5.5,<5.8",
-    "illuminate/filesystem": "^5.5,<5.8",
-    "guzzlehttp/guzzle": "~6.0",
+    "illuminate/support": "^5.8.31",
+    "illuminate/filesystem": "^5.8.31",
+    "guzzlehttp/guzzle": "^6.3.3",
     "wapmorgan/media-file": "^0.1.4",
     "symfony/http-foundation": "^4.3",
     "illuminate/container": "^5.7"
   },
   "require-dev": {
-    "illuminate/config": "^5.1,<5.8"
+    "illuminate/config": "^5.8.31"
   },
   "extra": {
     "laravel": {

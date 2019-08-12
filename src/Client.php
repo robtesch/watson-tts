@@ -3,7 +3,9 @@
 namespace Robtesch\Watsontts;
 
 use GuzzleHttp\Client as GuzzleClient;
+use GuzzleHttp\Exception\GuzzleException;
 use Illuminate\Support\Facades\Config;
+use Psr\Http\Message\ResponseInterface;
 
 /**
  * Class Client
@@ -29,7 +31,7 @@ class Client extends GuzzleClient
         $this->username = $config['username'] ?? Config::get('watson-tts.username', '');
         $this->password = $config['password'] ?? Config::get('watson-tts.password', '');
         parent::__construct([
-            'base_uri' => $this->endpoint . "/" . ltrim($this->apiVersion, "/") . "/",
+            'base_uri' => $this->endpoint . '/' . ltrim($this->apiVersion, '/') . '/',
             'auth'     => [$this->username, $this->password],
         ]);
     }
@@ -38,12 +40,12 @@ class Client extends GuzzleClient
      * @param string $method
      * @param string $uri
      * @param array  $options
-     * @return mixed|\Psr\Http\Message\ResponseInterface
-     * @throws \GuzzleHttp\Exception\GuzzleException
+     * @return mixed|ResponseInterface
+     * @throws GuzzleException
      */
-    public function request($method, $uri = "", array $options = [])
+    public function request($method, $uri = '', array $options = [])
     {
-        $uri = ltrim($uri, "/");
+        $uri = ltrim($uri, '/');
 
         return json_decode((string)parent::request($method, $uri, $options)
                                          ->getBody());

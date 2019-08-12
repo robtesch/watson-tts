@@ -7,6 +7,7 @@ use Illuminate\Support\Facades\Storage;
 use Robtesch\Watsontts\Exceptions\ValidationException;
 use Robtesch\Watsontts\Models\Synthesis;
 use wapmorgan\MediaFile\AudioAdapter;
+use wapmorgan\MediaFile\Exceptions\FileAccessException;
 use wapmorgan\MediaFile\MediaFile;
 
 /**
@@ -24,7 +25,7 @@ class MediaProcessor
      * @param string|null $customisationId
      * @return Synthesis
      * @throws ValidationException
-     * @throws \wapmorgan\MediaFile\Exceptions\FileAccessException
+     * @throws FileAccessException
      */
     public function processFile(string $path, string $extension, string $text, string $voice, string $customisationId = null)
     : Synthesis {
